@@ -29,18 +29,6 @@ nav{
 
 .logo{ color:#ff4f81; }
 
-nav ul{
-    list-style:none;
-    display:flex;
-    gap:20px;
-}
-
-nav a{
-    text-decoration:none;
-    color:#5a2a3a;
-    font-weight:bold;
-}
-
 main{ padding:40px; }
 
 .profile{ text-align:center; }
@@ -109,6 +97,7 @@ footer{
     background:#ffb6c1;
     margin-top:40px;
 }
+
 .btn-link{
     display:inline-block;
     padding:10px 15px;
@@ -133,7 +122,7 @@ footer{
 <main>
 
 <div class="profile">
-<img src="sinaunangtao.jpg">
+<img src="sinaunangtao.jpg" onerror="this.src='https://via.placeholder.com/120'">
 <h2>Olivien</h2>
 <p>BSCS-1D | CvSU Silang</p>
 </div>
@@ -143,7 +132,6 @@ footer{
 <p>My name is Olivien, an 18-year-old Computer Science student.</p>
 </div>
 
-<!-- DASHBOARD -->
 <div class="card">
 
 <h2>My Works</h2>
@@ -156,7 +144,9 @@ footer{
 
 <div class="upload-box">
 <input type="file" id="quizUpload" accept="image/*"><br><br>
-<input type="number" id="quizScore" placeholder="Score">
+<img id="quizTemp" class="preview-img" style="display:none;"><br>
+<input type="number" id="quizScore" placeholder="Score"><br><br>
+<button onclick="quizAdd()">Submit</button>
 </div>
 
 <p>Total: <span id="quizCount">0</span></p>
@@ -171,7 +161,9 @@ footer{
 
 <div class="upload-box">
 <input type="file" id="examUpload" accept="image/*"><br><br>
-<input type="number" id="examScore" placeholder="Score">
+<img id="examTemp" class="preview-img" style="display:none;"><br>
+<input type="number" id="examScore" placeholder="Score"><br><br>
+<button onclick="examAdd()">Submit</button>
 </div>
 
 <p>Total: <span id="examCount">0</span></p>
@@ -180,19 +172,14 @@ footer{
 <div id="examPreview"></div>
 </div>
 
-<!-- LAB -->
+<!-- CALCULATOR -->
 <div class="carousel-item">
 <h3>Calculator</h3>
 
 <div class="upload-box">
-<a href="cal.html" target="_blank" class="btn-link">
-    Calculator
-</a>
+<a href="cal.html" target="_blank" class="btn-link">Calculator</a>
 </div>
 
-
-
-<div id="labPreview"></div>
 </div>
 
 </div>
@@ -218,7 +205,6 @@ footer{
 
 <script>
 
-
 let currentSlide = 0;
 const slides = document.querySelectorAll(".carousel-item");
 const dots = document.querySelectorAll(".dots span");
@@ -236,7 +222,34 @@ function goToSlide(i){ currentSlide=i; showSlide(i); }
 
 showSlide(0);
 
-// GENERIC DASHBOARD FUNCTION
+// PREVIEW BEFORE SUBMIT
+document.getElementById("quizUpload").onchange = e=>{
+    const file = e.target.files[0];
+    if(file){
+        const reader = new FileReader();
+        reader.onload = ev=>{
+            const img = document.getElementById("quizTemp");
+            img.src = ev.target.result;
+            img.style.display="block";
+        }
+        reader.readAsDataURL(file);
+    }
+};
+
+document.getElementById("examUpload").onchange = e=>{
+    const file = e.target.files[0];
+    if(file){
+        const reader = new FileReader();
+        reader.onload = ev=>{
+            const img = document.getElementById("examTemp");
+            img.src = ev.target.result;
+            img.style.display="block";
+        }
+        reader.readAsDataURL(file);
+    }
+};
+
+// DASHBOARD
 function setup(type){
     const upload = document.getElementById(type+"Upload");
     const scoreInput = document.getElementById(type+"Score");
@@ -274,16 +287,16 @@ function setup(type){
         display(data);
     }
 
-    upload.addEventListener("change", function(){
-        const file=this.files[0];
-        const score=parseFloat(scoreInput.value);
+    window[type+"Add"]=function(){
+        const file = upload.files[0];
+        const score = parseFloat(scoreInput.value);
 
         if(!file || isNaN(score)){
             alert("Upload + score!");
             return;
         }
 
-        const reader=new FileReader();
+        const reader = new FileReader();
         reader.onload=function(e){
             let data=JSON.parse(localStorage.getItem(type))||[];
 
@@ -292,19 +305,18 @@ function setup(type){
 
             display(data);
             scoreInput.value="";
+            upload.value="";
+            document.getElementById(type+"Temp").style.display="none";
         }
         reader.readAsDataURL(file);
-    });
+    }
 
-    // LOAD
     let saved=JSON.parse(localStorage.getItem(type))||[];
     display(saved);
 }
 
-// INIT ALL
 setup("quiz");
 setup("exam");
-setup("lab");
 
 </script>
 
