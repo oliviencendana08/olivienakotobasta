@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playboy Zenti Portfolio</title>
+
+<style>
+
+html{ scroll-behavior:smooth; }
+
+body{
+    margin:0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color:#fff0f6;
+    color:#5a2a3a;
+}
+
+header{
+    background:#ffb6c1;
+    padding:15px 40px;
+}
+
+nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{ color:#ff4f81; }
+
+nav ul{
+    list-style:none;
+    display:flex;
+    gap:20px;
+}
+
+nav a{
+    text-decoration:none;
+    color:#5a2a3a;
+    font-weight:bold;
+}
+
+main{ padding:40px; }
+
+.profile{ text-align:center; }
+
+.profile img{
+    width:120px;
+    border-radius:50%;
+    border:3px solid #ff4f81;
+}
+
+.card{
+    background:#ffd6e7;
+    padding:25px;
+    margin:25px auto;
+    border-radius:10px;
+    max-width:700px;
+    box-shadow:0 0 10px rgba(255,105,180,0.3);
+}
+
+.upload-box{
+    border:2px dashed #ff4f81;
+    padding:20px;
+    text-align:center;
+    border-radius:10px;
+    margin-top:15px;
+}
+
+.preview-img{
+    width:120px;
+    margin:10px;
+    border-radius:10px;
+}
+
+.item{
+    background:#ffc1d6;
+    padding:10px;
+    margin:10px;
+    border-radius:10px;
+}
+
+button{
+    margin-top:5px;
+    padding:5px 10px;
+    background:#ff4f81;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.carousel-item{ display:none; }
+.carousel-item.active{ display:block; }
+
+.controls{text-align:center;margin-top:15px;}
+.dots{text-align:center;margin-top:10px;}
+.dots span{
+    height:10px;width:10px;margin:5px;
+    background:#ffb3c6;display:inline-block;
+    border-radius:50%;cursor:pointer;
+}
+.dots span.active{ background:#ff4f81; }
+
+footer{
+    text-align:center;
+    padding:20px;
+    background:#ffb6c1;
+    margin-top:40px;
+}
+.btn-link{
+    display:inline-block;
+    padding:10px 15px;
+    background:#ff4f81;
+    color:white;
+    border-radius:5px;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<nav>
+<h2 class="logo">My Portfolio</h2>
+</nav>
+</header>
+
+<main>
+
+<div class="profile">
+<img src="sinaunangtao.jpg">
+<h2>Olivien</h2>
+<p>BSCS-1D | CvSU Silang</p>
+</div>
+
+<div class="card">
+<h3>About Me</h3>
+<p>My name is Olivien, an 18-year-old Computer Science student.</p>
+</div>
+
+<!-- DASHBOARD -->
+<div class="card">
+
+<h2>My Works</h2>
+
+<div class="carousel">
+
+<!-- QUIZ -->
+<div class="carousel-item active">
+<h3>Quizzes and LAB</h3>
+
+<div class="upload-box">
+<input type="file" id="quizUpload" accept="image/*"><br><br>
+<input type="number" id="quizScore" placeholder="Score">
+</div>
+
+<p>Total: <span id="quizCount">0</span></p>
+<p>Average: <span id="quizAvg">0</span></p>
+
+<div id="quizPreview"></div>
+</div>
+
+<!-- EXAM -->
+<div class="carousel-item">
+<h3>Exams</h3>
+
+<div class="upload-box">
+<input type="file" id="examUpload" accept="image/*"><br><br>
+<input type="number" id="examScore" placeholder="Score">
+</div>
+
+<p>Total: <span id="examCount">0</span></p>
+<p>Average: <span id="examAvg">0</span></p>
+
+<div id="examPreview"></div>
+</div>
+
+<!-- LAB -->
+<div class="carousel-item">
+<h3>Calculator</h3>
+
+<div class="upload-box">
+<a href="cal.html" target="_blank" class="btn-link">
+    Calculator
+</a>
+</div>
+
+
+
+<div id="labPreview"></div>
+</div>
+
+</div>
+
+<div class="controls">
+<button onclick="prevSlide()">❮</button>
+<button onclick="nextSlide()">❯</button>
+</div>
+
+<div class="dots">
+<span onclick="goToSlide(0)"></span>
+<span onclick="goToSlide(1)"></span>
+<span onclick="goToSlide(2)"></span>
+</div>
+
+</div>
+
+</main>
+
+<footer>
+<p>© 2026 Olivien Portfolio</p>
+</footer>
+
+<script>
+
+
+let currentSlide = 0;
+const slides = document.querySelectorAll(".carousel-item");
+const dots = document.querySelectorAll(".dots span");
+
+function showSlide(i){
+    slides.forEach(s=>s.classList.remove("active"));
+    dots.forEach(d=>d.classList.remove("active"));
+    slides[i].classList.add("active");
+    dots[i].classList.add("active");
+}
+
+function nextSlide(){ currentSlide=(currentSlide+1)%slides.length; showSlide(currentSlide); }
+function prevSlide(){ currentSlide=(currentSlide-1+slides.length)%slides.length; showSlide(currentSlide); }
+function goToSlide(i){ currentSlide=i; showSlide(i); }
+
+showSlide(0);
+
+// GENERIC DASHBOARD FUNCTION
+function setup(type){
+    const upload = document.getElementById(type+"Upload");
+    const scoreInput = document.getElementById(type+"Score");
+    const preview = document.getElementById(type+"Preview");
+    const count = document.getElementById(type+"Count");
+    const avg = document.getElementById(type+"Avg");
+
+    function display(data){
+        preview.innerHTML="";
+        let total=0;
+
+        data.forEach((item,i)=>{
+            total+=item.score;
+
+            const div=document.createElement("div");
+            div.classList.add("item");
+
+            div.innerHTML=`
+            <img src="${item.img}" class="preview-img"><br>
+            Score: ${item.score}<br>
+            <button onclick="${type}Delete(${i})">Delete</button>
+            `;
+
+            preview.appendChild(div);
+        });
+
+        count.textContent=data.length;
+        avg.textContent=data.length?(total/data.length).toFixed(2):0;
+    }
+
+    window[type+"Delete"]=function(i){
+        let data=JSON.parse(localStorage.getItem(type))||[];
+        data.splice(i,1);
+        localStorage.setItem(type,JSON.stringify(data));
+        display(data);
+    }
+
+    upload.addEventListener("change", function(){
+        const file=this.files[0];
+        const score=parseFloat(scoreInput.value);
+
+        if(!file || isNaN(score)){
+            alert("Upload + score!");
+            return;
+        }
+
+        const reader=new FileReader();
+        reader.onload=function(e){
+            let data=JSON.parse(localStorage.getItem(type))||[];
+
+            data.push({img:e.target.result,score:score});
+            localStorage.setItem(type,JSON.stringify(data));
+
+            display(data);
+            scoreInput.value="";
+        }
+        reader.readAsDataURL(file);
+    });
+
+    // LOAD
+    let saved=JSON.parse(localStorage.getItem(type))||[];
+    display(saved);
+}
+
+// INIT ALL
+setup("quiz");
+setup("exam");
+setup("lab");
+
+</script>
+
+</body>
+</html>
